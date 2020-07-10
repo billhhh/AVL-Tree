@@ -117,6 +117,51 @@ class AVLTree(object):
         else:
             self.root = self._insert(key, self.root)
 
+    def _delete(self, key, node):
+        if node == None:
+            print("Can't find %d" % key)
+            return node
+        elif node.key == key:
+            if node.left == None:  # if only has right, copy the right one
+                return node.right
+            elif node.right == None:  # if only has left, copy the left one
+                return node.left
+            else:  # if both right/left nodes exist
+                if self.height(node.left) > self.height(node.right):  # if left height > right
+                    # find the very right node, return and delete it
+                    node = node.left
+                    while (node.right != None):
+                        node = node.right
+                    node = self._delete(node.key, node)
+                    node.key = node.key
+                    return node
+                else:  # if right height > left
+                    node = node.right
+                    while node.left != None:
+                        node = node.left
+                    node = self._delete(node.key, node)
+                    node.key = node.key
+                    return node
+        elif key < node.key:
+            node.left = self._delete(key, node.left)  # find in the left subtree
+            if self.height(node.right) - self.height(node.left) >= 2:  # if right - left > 1
+                if self.height(node.right.left) > self.height(node.right.right):
+                    node = self.right_left_rotate(node)
+                else:
+                    node = self.left_rotate(node)
+        elif key > node.key:
+            node.right = self._delete(key, node.right)  # find in the right subtree
+            if self.height(node.left) - self.height(node.right) >= 2:  # if left - right > 1
+                if self.height(node.left.right) > self.height(node.left.left):
+                    node = self.left_right_rotate(node)
+                else:
+                    node = self.right_rotate(node)
+        node.height = max(self.height(node.left), self.height(node.right)) + 1
+        return node
+
+    def delete(self, key):
+        self.root = self._delete(key, self.root)
+
     def print_by_layer(self, t):
         n = len(t) - 1
         for i in range(1, n - 1):
@@ -172,9 +217,11 @@ def main():
 
     for i in input:
         Tree.insert(i)
-        Tree.in_order_T(Tree.root)
-        print('\n')
+        # Tree.in_order_T(Tree.root)
+        # print('\n')
 
+    Tree.printTree()
+    Tree.delete(10)
     Tree.printTree()
 
 
