@@ -142,7 +142,7 @@ class AVLTree(object):
 
         elif node.key == key:
             if node.left and node.right:  # if both right/left nodes exist
-                if self.height(node.left) > self.height(node.right):  # if left height > right
+                if self.height(node.left) >= self.height(node.right):  # if left height > right
                     # find the very right node, return and delete it
                     max_node = node.left
                     while max_node.right != None:
@@ -229,7 +229,9 @@ def main():
         # print('\n')
 
     Tree.printTree()
-    Tree.delete(10)
+    Tree.delete(8)
+    # Tree.delete(4)
+    # Tree.delete(7)
     Tree.printTree()
 
 
