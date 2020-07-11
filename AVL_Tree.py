@@ -142,26 +142,27 @@ class AVLTree(object):
             if node.left and node.right:  # if both right/left nodes exist
                 if self.height(node.left) > self.height(node.right):  # if left height > right
                     # find the very right node, return and delete it
-                    node = node.left
-                    while (node.right != None):
-                        node = node.right
-                    node = self._delete(node.key, node)
-                    node.key = node.key
-                    return node
+                    max_node = node.left
+                    while max_node.right != None:
+                        max_node = max_node.right
+                    node.key = max_node.key
+                    node.left = self._delete(node.key, node.left)
                 else:  # if right height > left
                     # find the very left node, return and delete it
-                    node = node.right
-                    while node.left != None:
-                        node = node.left
-                    node = self._delete(node.key, node)
-                    node.key = node.key
-                    return node
-            elif node.left:  # if only has left, copy it
-                return node.left
-            elif node.right:  # if only has right, copy it
-                return node.right
+                    min_node = node.right
+                    while min_node.left != None:
+                        min_node = min_node.left
+                    node.key = min_node.key
+                    node.right = self._delete(node.key, node.right)
+                self.update_height(node)
+            else:
+                if node.left:  # if only has left, copy it
+                    return node.left
+                elif node.right:  # if only has right, copy it
+                    return node.right
+                else:
+                    node = None
 
-        self.update_height(node)
         return node
 
     def delete(self, key):
