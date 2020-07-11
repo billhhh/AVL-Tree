@@ -129,6 +129,7 @@ class AVLTree(object):
                     node = self.right_left_rotate(node)
                 else:
                     node = self.left_rotate(node)
+            self.update_height(node)
 
         elif key > node.key:
             node.right = self._delete(key, node.right)  # find in the right subtree
@@ -137,6 +138,7 @@ class AVLTree(object):
                     node = self.left_right_rotate(node)
                 else:
                     node = self.right_rotate(node)
+            self.update_height(node)
 
         elif node.key == key:
             if node.left and node.right:  # if both right/left nodes exist
@@ -157,9 +159,9 @@ class AVLTree(object):
                 self.update_height(node)
             else:
                 if node.left:  # if only has left, copy it
-                    return node.left
+                    node = node.left
                 elif node.right:  # if only has right, copy it
-                    return node.right
+                    node = node.right
                 else:
                     node = None
 
