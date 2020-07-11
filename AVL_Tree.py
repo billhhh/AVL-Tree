@@ -51,7 +51,7 @@ class AVLTree(object):
         node.height = max(self.height(node.left), self.height(node.right)) + 1
 
     def unbalance(self, node):
-        return abs(self.height(node.left) - self.height(node.right)) is 2
+        return abs(self.height(node.left) - self.height(node.right)) >= 2
 
     """LL"""
     def right_rotate(self, node):
@@ -121,12 +121,25 @@ class AVLTree(object):
         if node == None:
             print("Can't find %d" % key)
             return node
+
+        elif key < node.key:
+            node.left = self._delete(key, node.left)  # find in the left subtree
+            if self.unbalance(node):  # if right - left > 1
+                if self.height(node.right.left) > self.height(node.right.right):
+                    node = self.right_left_rotate(node)
+                else:
+                    node = self.left_rotate(node)
+
+        elif key > node.key:
+            node.right = self._delete(key, node.right)  # find in the right subtree
+            if self.unbalance(node):  # if left - right > 1
+                if self.height(node.left.right) > self.height(node.left.left):
+                    node = self.left_right_rotate(node)
+                else:
+                    node = self.right_rotate(node)
+
         elif node.key == key:
-            if node.left == None:  # if only has right, copy the right one
-                return node.right
-            elif node.right == None:  # if only has left, copy the left one
-                return node.left
-            else:  # if both right/left nodes exist
+            if node.left and node.right:  # if both right/left nodes exist
                 if self.height(node.left) > self.height(node.right):  # if left height > right
                     # find the very right node, return and delete it
                     node = node.left
@@ -136,27 +149,19 @@ class AVLTree(object):
                     node.key = node.key
                     return node
                 else:  # if right height > left
+                    # find the very left node, return and delete it
                     node = node.right
                     while node.left != None:
                         node = node.left
                     node = self._delete(node.key, node)
                     node.key = node.key
                     return node
-        elif key < node.key:
-            node.left = self._delete(key, node.left)  # find in the left subtree
-            if self.height(node.right) - self.height(node.left) >= 2:  # if right - left > 1
-                if self.height(node.right.left) > self.height(node.right.right):
-                    node = self.right_left_rotate(node)
-                else:
-                    node = self.left_rotate(node)
-        elif key > node.key:
-            node.right = self._delete(key, node.right)  # find in the right subtree
-            if self.height(node.left) - self.height(node.right) >= 2:  # if left - right > 1
-                if self.height(node.left.right) > self.height(node.left.left):
-                    node = self.left_right_rotate(node)
-                else:
-                    node = self.right_rotate(node)
-        node.height = max(self.height(node.left), self.height(node.right)) + 1
+            elif node.left:  # if only has left, copy it
+                return node.left
+            elif node.right:  # if only has right, copy it
+                return node.right
+
+        self.update_height(node)
         return node
 
     def delete(self, key):
