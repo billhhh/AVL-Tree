@@ -229,7 +229,7 @@ def main():
         # print('\n')
 
     Tree.printTree()
-    Tree.delete(8)
+    Tree.delete(10)
     # Tree.delete(4)
     # Tree.delete(7)
     Tree.printTree()
